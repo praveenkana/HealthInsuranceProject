@@ -4,7 +4,8 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class DCSummaryInputs {
+public class DCSummaryReports {
+
 	private List<ChildrenInputs> childrens;
 	private EducationInputs educationdetails;
 	private IncomeInputs incomeDetails;
