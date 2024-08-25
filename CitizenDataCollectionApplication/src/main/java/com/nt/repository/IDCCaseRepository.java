@@ -6,4 +6,6 @@ import com.nt.entity.DCCaseEntity;
 
 public interface IDCCaseRepository extends JpaRepository<DCCaseEntity, Integer> {
 
+	public DCCaseEntity findByCaseNo(Integer caseNo);
+
 }

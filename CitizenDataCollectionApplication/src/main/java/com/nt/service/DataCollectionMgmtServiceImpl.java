@@ -1,5 +1,6 @@
 package com.nt.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,15 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nt.bindings.ChildrenInputs;
+import com.nt.bindings.CitizenAppRegistrationInputs;
 import com.nt.bindings.DCSummaryReports;
 import com.nt.bindings.EducationInputs;
 import com.nt.bindings.IncomeInputs;
 import com.nt.bindings.PlanSelectionInputs;
+import com.nt.entity.CitizenAppRegistrationEntity;
 import com.nt.entity.DCCaseEntity;
 import com.nt.entity.DCChildrenEntity;
 import com.nt.entity.DCEducationEntity;
 import com.nt.entity.DCIncomeEntity;
 import com.nt.entity.PlanEntity;
+import com.nt.repository.ICitizenAppRegistrationRepository;
 import com.nt.repository.IDCCaseRepository;
 import com.nt.repository.IDCChildrenRepository;
 import com.nt.repository.IDCEducationRepository;
@@ -35,6 +39,9 @@ public class DataCollectionMgmtServiceImpl implements IDataCollectionMgmtService
 	private IDCEducationRepository educationrepo;
 	@Autowired
 	private IDCChildrenRepository childrepo;
+	@Autowired
+	private
+	ICitizenAppRegistrationRepository apprepo;
 
 	@Override
 	public Integer generatecaseNo(Integer appid) {
@@ -111,8 +118,65 @@ public class DataCollectionMgmtServiceImpl implements IDataCollectionMgmtService
 
 	@Override
 	public DCSummaryReports showSummeryReport(Integer caseNo) {
-		// TODO Auto-generated method stub
-		return null;
+
+		// get multiple entities based on case no
+
+		List<DCChildrenEntity> childlist = childrepo.findByCaseNo(caseNo);
+		DCIncomeEntity incomeEntity = incomerepo.findByCaseNo(caseNo);
+		DCEducationEntity educationEntity = educationrepo.findByCaseNo(caseNo);
+		Optional<DCCaseEntity> opt = caserepo.findById(caseNo);
+		String planName = null;
+		Integer appid = null;
+		if (opt.isPresent()) {
+			DCCaseEntity caseEntity = new DCCaseEntity();
+			Integer planId = caseEntity.getPlanId();
+			appid = caseEntity.getAppId();
+			Optional<PlanEntity> pid = planrepo.findById(planId);
+			if (pid.isPresent()) {
+				planName = pid.get().getPlanName();
+			}
+
+		}
+		Optional<CitizenAppRegistrationEntity> optId = apprepo.findById(appid);
+		CitizenAppRegistrationEntity appregEntity=null;
+		if(optId.isPresent()) {
+			appregEntity=optId.get();
+		}
+
+		
+		
+		//convert entity objects to binding objects
+	
+		EducationInputs education=new EducationInputs();
+		BeanUtils.copyProperties(educationEntity, education);
+		IncomeInputs income=new IncomeInputs();
+		BeanUtils.copyProperties(incomeEntity, income);
+		List<ChildrenInputs> list=new ArrayList();
+		
+		childlist.forEach(child->{
+			ChildrenInputs inputs=new ChildrenInputs();
+			BeanUtils.copyProperties(inputs, list);
+			list.add(inputs);
+			
+		});
+		
+		CitizenAppRegistrationInputs appinputs=new CitizenAppRegistrationInputs();
+		BeanUtils.copyProperties(appregEntity, appinputs);
+		//prepare dcsummaryreport
+		
+		DCSummaryReports report=new DCSummaryReports();
+		report.setAppDetails(appinputs);
+		report.setChildrens(list);
+		report.setEducationdetails(education);
+		report.setIncomeDetails(income);
+		report.setPlanName(planName);
+		return report;
 	}
+
+
+
+	
+
+	
 
 }

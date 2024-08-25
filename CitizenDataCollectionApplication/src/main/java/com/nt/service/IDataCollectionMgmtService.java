@@ -20,8 +20,12 @@ public interface IDataCollectionMgmtService {
 
 	public Integer saveEducationDetails(EducationInputs inputs);
 
-	public Integer saveChildrenDetails(List<ChildrenInputs> children);
-	
 	public DCSummaryReports showSummeryReport(Integer caseNo);
+
+	Integer saveChildrenDetails(List<ChildrenInputs> children);
+
+
+
+
 
 }

@@ -10,6 +10,6 @@ public class DCSummaryReports {
 	private EducationInputs educationdetails;
 	private IncomeInputs incomeDetails;
 	private CitizenAppRegistrationInputs AppDetails;
-	private PlanSelectionInputs planDetails;
+	private String planName;
 
 }

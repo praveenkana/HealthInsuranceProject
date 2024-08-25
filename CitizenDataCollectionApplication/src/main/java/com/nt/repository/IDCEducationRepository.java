@@ -6,4 +6,6 @@ import com.nt.entity.DCEducationEntity;
 
 public interface IDCEducationRepository extends JpaRepository<DCEducationEntity, Integer> {
 
+	public DCEducationEntity findByCaseNo(Integer caseNo);
+
 }
